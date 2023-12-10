@@ -1,0 +1,67 @@
+/* Sidebar */
+.monaco-workbench
+  .activitybar
+  > .content
+  :not(.monaco-menu)
+  > .monaco-action-bar
+  .action-item.checked
+  .active-item-indicator:before {
+  border: 0;
+  width: 3px;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-image: linear-gradient(to bottom, #12c2e9, #c471ed, #f64f59);
+}
+
+.tab-border-top-container {
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: xor;
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  padding: 2px;
+  width: 100% !important;
+  height: 100% !important;
+  box-sizing: border-box;
+  /* height: calc(100% - 4px) !important; */ /* using "h100p && box-sizing: border-box" to auto calc with padding */
+  background-color: transparent !important;
+}
+
+.tab-border-top-container:before {
+  content: '';
+  width: 500px;
+  height: 500px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  animation: spinner 5s /* cubic-bezier(0.25, 0.46, 0.45, 0.94) */ linear infinite;
+  background: conic-gradient(
+      from 0deg at 50% 50%,
+      rgba(185, 215, 243, 0) 0deg,
+      rgba(185, 215, 243, 0) 289.4deg,
+      #ffb86c 318.05deg,
+      #ff65f2 1turn
+    ),
+    conic-gradient(
+      from 180deg at 50% 50%,
+      rgba(185, 215, 243, 0) 0deg,
+      rgba(185, 215, 243, 0) 287.46deg,
+      #20e3b2 325.02deg,
+      #00aefd 1turn
+    );
+}
+@keyframes spinner {
+  100% {
+    transform: translate(-50%, -50%) rotate(1turn);
+  }
+}
+
+/* Cursor */
+.monaco-editor .cursors-layer .cursor {
+  background: #12c2e9;
+  background: -webkit-linear-gradient(to top, #f64f59, #c471ed, #12c2e9);
+  background: linear-gradient(to top, #f64f59, #c471ed, #12c2e9);
+}
