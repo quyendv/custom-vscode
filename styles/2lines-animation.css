@@ -1,3 +1,22 @@
+/**
+  * Giải thích "-webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);" => tạo 2 mask như sau:
+    Khi start và end trùng nhau, linear-gradient mặc định sẽ tự vẽ toàn bộ khoảng không gian theo hình dạng của phần tử chứa nó -> mỗi gradient bên dưới đều tạo ra 1 hình chữ nhật màu trắng bao phủ element
+    - Phần tử hiện tại là .tab-border-top-container ban đầu là thanh border top của tab, nhưng được set width 100% và height ~ 100% nên có thể nói nó ~ bằng kích thước của tab, đồng thời có box-sizing: border-box được set
+    - Mask1: linear-gradient 1 với start và end đều là 0 (trùng nhau) thì sẽ tạo ra 1 hình khối bao trùm element hiện tại (.tab-border-top-container), tuy nhiên thêm thuộc tính content-box
+      + element hiện tại có box-sizing: border-box và padding 1px -> content bị đẩy lùi vào trong so với kích thước 1px mỗi phía
+      + thuộc tính content-box sẽ chỉ ra rằng hình khối vừa tạo ra chỉ hiển thị (mask) phần content-box của element, không bao gồm margin, padding, ... (ở đây chỉ có padding)
+      -> có thể hiểu mask1 được tạo ra là 1 hình chữ nhật có kích thường bằng element giảm 1px (padding được set) ở mỗi chiều -> hiển thị content-box, loại bỏ padding.
+    - Mask2: tương tự như mask1 nhưng không chỉ định nên mặc định là border-box (không biết có liên quan đến box-sizing đang border-box không)
+    => Như vậy, css tạo ra 2 mask, mask2 có kích thước bằng phần tử (hiển thị toàn bộ phần tử) và mask1 che phủ phần content-box của phần tử (-1px mỗi phía do padding)
+    => TỨC LÀ: 2 mask này CÙNG HIỂN THỊ đi phần content-box của element -> trùng nhau phần content và khác nhau phần viền 1px do padding
+
+  * Khi kết hợp với "mask-composite: xor" - một thuộc tính chỉ định cách thức mà các mask đồng thời tác động lên element (ở đây có 2 mask)
+    - "xor": trong bit operator nó sẽ trả về true khi 2 bit khác nhau (cùng là 0 hoặc 1 sẽ false, chỉ một trong 2 true sẽ true)
+    - Áp dụng vào 2 mask trên, phần content-box đều được hiển thị, tức là chúng giống nhau tạo vùng đó -> xor sẽ false. Ngược lại phần viền hở 1px (do padding) sẽ là true do không cùng bao phủ/ đè lên nhau
+    -> Kết quả thuộc tính css: css mask là để hiển thị element theo kích thước của mask (khác với clip-path là bởi đường vẽ), khi kết hợp "mask-composite: xor" thì sẽ lấy phần KHÔNG GIAO NHAU của các mask và hiển thị
+    -> Vì chỉ có phần padding bị exclude bởi mask1 là không giao với mask2 -> chỉ hiện thị phần viền đó và ẩn đi phần content-box giao nhau
+*/
+
 .tab-border-top-container {
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
@@ -10,7 +29,7 @@
   background-color: transparent !important;
 }
 .tab-border-top-container:before {
-  content: "";
+  content: '';
   width: 500px;
   height: 500px;
   position: absolute;
